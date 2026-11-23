@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REDSTEP MART | 러닝화 · 일상화 공식 스토어</title>
+  <style>
+    :root {
+      --red: #EE1C25; --red-d: #C81018; --yellow: #FFD400;
+      --black: #111111; --gray: #666666; --bg: #F5F5F7; --line: #E5E5E5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; color: var(--black); background: #fff; line-height: 1.5; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font-family: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+
+    /* 상단 띠배너 & 헤더 */
+    .ticker { background: var(--black); color: #fff; text-align: center; font-size: 12px; padding: 8px 12px; }
+    .ticker b { color: var(--yellow); }
+    .ticker span { background: var(--red); padding: 2px 6px; border-radius: 3px; font-weight: 700; margin-right: 6px; }
+    header { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 2px solid var(--black); }
+    .nav-wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 19px; letter-spacing: -0.5px; }
+    .logo em { font-style: normal; background: var(--red); color: var(--yellow); padding: 4px 8px; border-radius: 4px; border: 2px solid var(--black); }
+    nav { display: flex; gap: 20px; font-weight: 700; font-size: 14px; }
+    nav a:hover { color: var(--red); }
+    .actions { display: flex; align-items: center; gap: 8px; }
+    .chip { border: 1.5px solid var(--black); padding: 7px 12px; border-radius: 99px; font-size: 12.5px; font-weight: 700; }
+    .chip.on { background: var(--black); color: #fff; }
+    .chip .pt { background: var(--yellow); color: var(--black); padding: 1px 6px; border-radius: 99px; margin-left: 4px; font-size: 11px; }
+    .cart-btn { background: var(--red); color: #fff; padding: 8px 14px; border-radius: 99px; font-size: 12.5px; font-weight: 700; }
+    .cart-btn span { background: var(--yellow); color: var(--black); padding: 1px 6px; border-radius: 99px; margin-left: 4px; font-weight: 900; }
+
+    /* 히어로 슬라이더 (4장 교차) */
+    .hero { position: relative; height: 470px; background: var(--black); overflow: hidden; }
+    .slide { position: absolute; inset: 0; opacity: 0; transition: opacity .7s ease; pointer-events: none; }
+    .slide.active { opacity: 1; pointer-events: auto; }
+    .slide img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.65); }
+    .slide-txt { position: absolute; inset: 0; max-width: 1200px; margin: 0 auto; padding: 0 36px; display: flex; flex-direction: column; justify-content: center; color: #fff; }
+    .kicker { width: fit-content; background: var(--red); color: #fff; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 4px; margin-bottom: 12px; }
+    .kicker.y { background: var(--yellow); color: var(--black); }
+    .slide-txt h1 { font-size: clamp(26px, 4vw, 46px); font-weight: 900; line-height: 1.18; margin-bottom: 12px; }
+    .slide-txt h1 b { color: var(--yellow); }
+    .slide-txt p { max-width: 460px; font-size: 14.5px; opacity: .9; margin-bottom: 22px; }
+    .btn { display: inline-block; background: var(--red); color: #fff; font-weight: 800; font-size: 13.5px; padding: 12px 22px; border-radius: 6px; transition: .2s; }
+    .btn:hover { background: var(--red-d); }
+    .btn.dark { background: var(--black); }
+    .btn.dark:hover { background: var(--red); }
+    .arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,.5); color: #fff; font-size: 22px; z-index: 5; }
+    .arrow:hover { background: var(--red); }
+    .arrow.prev { left: 16px; } .arrow.next { right: 16px; }
+    .dots { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 5; }
+    .dot { width: 26px; height: 5px; border-radius: 99px; background: rgba(255,255,255,.4); }
+    .dot.active { width: 44px; background: var(--red); }
+
+    /* 섹션 공통 & 상품 그리드 */
+    .sec { max-width: 1200px; margin: 0 auto; padding: 56px 20px; }
+    .sec-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px; margin-bottom: 24px; }
+    .sec-head h2 { font-size: 26px; font-weight: 900; }
+    .sec-head small { color: var(--red); font-weight: 800; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+    .bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab { padding: 8px 18px; border-radius: 99px; background: var(--bg); font-weight: 700; font-size: 13.5px; }
+    .tab.active { background: var(--black); color: #fff; }
+    .search { border: 1.5px solid var(--line); border-radius: 99px; padding: 8px 14px; font-size: 13px; width: 210px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: .2s; background: #fff; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0,0,0,.1); }
+    .thumb { position: relative; aspect-ratio: 4/3; background: #eee; overflow: hidden; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .tag { position: absolute; top: 10px; left: 10px; background: var(--black); color: var(--yellow); font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; }
+    .tag.sale { left: auto; right: 10px; background: var(--red); color: #fff; }
+    .c-body { padding: 16px; display: flex; flex-direction: column; flex: 1; }
+    .c-body h3 { font-size: 16px; font-weight: 900; margin-bottom: 2px; }
+    .c-body .sub { font-size: 12.5px; color: var(--gray); margin-bottom: 8px; }
+    .price-row { display: flex; align-items: baseline; gap: 6px; margin: 6px 0; }
+    .price { font-size: 18px; font-weight: 900; }
+    .orig { font-size: 12px; color: #999; text-decoration: line-through; }
+    .pt-line { font-size: 12px; color: var(--red); font-weight: 700; margin-bottom: 12px; }
+    .buy-row { margin-top: auto; display: flex; gap: 6px; }
+    .buy-row select { border: 1.5px solid var(--line); border-radius: 6px; padding: 0 8px; font-size: 12.5px; font-weight: 700; }
+    .buy-row .btn { flex: 1; padding: 10px 0; text-align: center; }
+
+    /* 멤버십 섹션 */
+    .member-bg { background: var(--bg); border-top: 1px solid var(--line); }
+    .status-box { background: #fff; border: 2px solid var(--black); border-radius: 12px; padding: 20px 24px; margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; box-shadow: 4px 4px 0 var(--black); }
+    .tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .tier { background: #fff; border: 1.5px solid var(--line); border-radius: 12px; padding: 20px; }
+    .tier.now { border-color: var(--red); box-shadow: 0 0 0 2px rgba(238,28,37,.15); }
+    .t-badge { display: inline-block; font-size: 11px; font-weight: 900; padding: 4px 9px; border-radius: 4px; margin-bottom: 10px; }
+    .tier h4 { font-size: 26px; font-weight: 900; margin-bottom: 4px; }
+    .tier h4 span { font-size: 13px; color: var(--red); }
+    .tier p { font-size: 12px; color: var(--gray); padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--line); }
+    .tier li { list-style: none; font-size: 12.5px; margin-bottom: 4px; }
+
+    /* 모달 & 장바구니/결제 */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: none; align-items: center; justify-content: center; z-index: 500; padding: 16px; }
+    .overlay.open { display: flex; }
+    .modal { background: #fff; width: min(500px, 100%); max-height: 90vh; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+    .m-head { background: var(--black); color: #fff; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+    .m-head button { color: #fff; font-size: 22px; }
+    .m-body { padding: 20px; overflow-y: auto; }
+    .m-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+    .m-tabs button { padding: 9px; border-radius: 6px; background: var(--bg); font-weight: 800; font-size: 13px; }
+    .m-tabs button.active { background: var(--black); color: #fff; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+    .field input, .field select { width: 100%; height: 40px; border: 1.5px solid var(--line); border-radius: 6px; padding: 0 12px; font-size: 13.5px; }
+    .pt-box { background: #FFF9E6; border: 1.5px solid var(--yellow); border-radius: 8px; padding: 12px; margin: 12px 0; font-size: 13px; }
+    .cart-item { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .cart-item img { width: 60px; height: 60px; border-radius: 6px; object-fit: cover; }
+    .sum-row { display: flex; justify-content: space-between; font-size: 13.5px; margin: 6px 0; }
+    .sum-row.total { font-size: 17px; font-weight: 900; border-top: 2px solid var(--black); padding-top: 10px; margin-top: 10px; }
+    footer { background: var(--black); color: #999; text-align: center; padding: 30px 20px; font-size: 12.5px; }
+    #toast { position: fixed; bottom: 20px; right: 20px; background: var(--black); color: #fff; padding: 12px 18px; border-radius: 8px; border-left: 5px solid var(--red); font-size: 13px; font-weight: 700; display: none; z-index: 900; }
+
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } .tiers { grid-template-columns: repeat(2, 1fr); } nav { display: none; } }
+    @media (max-width: 600px) { .grid, .tiers { grid-template-columns: 1fr; } .hero { height: 400px; } }
+  </style>
+</head>
+<body>
+
+  <div class="ticker"><span>EVENT</span>신규 회원가입 즉시 <b>3,000P 지급</b> · 등급별 최대 <b>10% 적립 + 5% 할인</b> · 5만원 이상 무료배송</div>
+
+  <header>
+    <div class="nav-wrap">
+      <a href="#top" class="logo" onclick="setCat('all')"><em>RS</em> REDSTEP MART</a>
+      <nav>
+        <a href="#shop" onclick="setCat('all')">전체상품</a>
+        <a href="#shop" onclick="setCat('running')">러닝화</a>
+        <a href="#shop" onclick="setCat('casual')">일상화</a>
+        <a href="#member">등급 · 포인트</a>
+      </nav>
+      <div class="actions">
+        <button class="chip" id="userBtn" onclick="clickUser()">로그인 / 회원가입</button>
+        <button class="cart-btn" onclick="openCart()">장바구니 <span id="cartCount">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 히어로 4장 슬라이드 -->
+  <section id="top" class="hero">
+    <div class="slide active">
+      <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=80" alt="카본 러닝화" />
+      <div class="slide-txt">
+        <span class="kicker">2026 PERFORMANCE RUNNING</span>
+        <h1>기록을 앞당기는 추진력,<br /><b>VELOCITY CARBON</b></h1>
+        <p>초경량 카본 플레이트와 고탄성 쿠션 폼. 입문 조깅부터 마라톤까지 러닝화 전 품목 특가 진행 중.</p>
+        <a href="#shop" class="btn" onclick="setCat('running')">러닝화 보러가기 →</a>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1400&q=80" alt="데일리 일상화" />
+      <div class="slide-txt">
+        <span class="kicker y">DAILY CASUAL SNEAKERS</span>
+        <h1>어떤 코디에도 완벽한<br /><b>미니멀 일상화 컬렉션</b></h1>
+        <p>와이드 데님과 슬랙스에 자연스럽게 어울리는 3cm대 안정적 굽높이와 하루 종일 편안한 착화감.</p>
+        <a href="#shop" class="btn" onclick="setCat('casual')">일상화 보러가기 →</a>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1400&q=80" alt="맥스쿠션 러닝" />
+      <div class="slide-txt">
+        <span class="kicker">MAX CUSHION LINEUP</span>
+        <h1>무릎 부담을 덜어주는<br /><b>데일리 쿠션 러닝화</b></h1>
+        <p>매일 5km 이상 달리는 러너를 위한 고밀도 충격 흡수 미드솔과 통기성 메쉬 어퍼.</p>
+        <a href="#shop" class="btn" onclick="setCat('running')">쿠션 러닝화 보기 →</a>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=1400&q=80" alt="멤버십 혜택" />
+      <div class="slide-txt">
+        <span class="kicker y">REDSTEP MEMBERSHIP</span>
+        <h1>신발 살수록 쌓이는<br />최대 <b>10% 포인트 적립</b></h1>
+        <p>회원가입 즉시 3,000P 지급! BRONZE부터 VIP까지 4단계 등급 혜택으로 현금처럼 바로 할인받으세요.</p>
+        <button class="btn" onclick="openAuth('signup')">회원가입하고 3,000P 받기 →</button>
+      </div>
+    </div>
+    <button class="arrow prev" onclick="moveSlide(-1)">‹</button>
+    <button class="arrow next" onclick="moveSlide(1)">›</button>
+    <div class="dots" id="dots"></div>
+  </section>
+
+  <!-- 상품 목록 -->
+  <section id="shop" class="sec">
+    <div class="sec-head">
+      <div><small>RUNNING &amp; DAILY SHOES</small><h2>베스트 슈즈 컬렉션</h2></div>
+    </div>
+    <div class="bar">
+      <div class="tabs">
+        <button class="tab active" data-c="all" onclick="setCat('all')">전체 (6)</button>
+        <button class="tab" data-c="running" onclick="setCat('running')">러닝화 (3)</button>
+        <button class="tab" data-c="casual" onclick="setCat('casual')">일상화 (3)</button>
+      </div>
+      <input class="search" id="searchBox" placeholder="신발 이름 검색..." oninput="renderShop()" />
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- 회원 등급 & 포인트 안내 -->
+  <section id="member" class="member-bg">
+    <div class="sec">
+      <div class="sec-head"><div><small>MEMBERSHIP TIERS</small><h2>회원 등급별 포인트 제도</h2></div></div>
+      <div class="status-box" id="memberBanner"></div>
+      <div class="tiers" id="tierGrid"></div>
+    </div>
+  </section>
+
+  <footer>© 2026 REDSTEP MART · 러닝화 &amp; 일상화 온라인 슈즈 스토어 (포트폴리오 실습 페이지)</footer>
+
+  <!-- 로그인 / 회원가입 모달 -->
+  <div class="overlay" id="authModal">
+    <div class="modal">
+      <div class="m-head"><span>로그인 · 회원가입</span><button onclick="closeModal()">×</button></div>
+      <div class="m-body">
+        <div class="m-tabs">
+          <button id="tLogin" class="active" onclick="switchAuth('login')">로그인</button>
+          <button id="tSignup" onclick="switchAuth('signup')">회원가입 (+3,000P)</button>
+        </div>
+        <form id="fLogin" onsubmit="doLogin(event)">
+          <div class="field"><label>아이디</label><input id="lId" required placeholder="아이디 입력" /></div>
+          <div class="field"><label>비밀번호</label><input id="lPw" type="password" required placeholder="비밀번호 입력" /></div>
+          <button class="btn" style="width:100%;">로그인</button>
+          <button type="button" class="btn dark" style="width:100%; margin-top:8px;" onclick="demoLogin()">⚡ 1초 체험 로그인 (GOLD · 12,500P)</button>
+        </form>
+        <form id="fSignup" style="display:none;" onsubmit="doSignup(event)">
+          <div class="pt-box">🎁 가입 즉시 <b>BRONZE 등급 + 3,000P</b>가 자동 지급됩니다.</div>
+          <div class="field"><label>이름</label><input id="sName" required placeholder="홍길동" /></div>
+          <div class="field"><label>아이디</label><input id="sId" required minlength="3" placeholder="영문/숫자 3자 이상" /></div>
+          <div class="field"><label>비밀번호</label><input id="sPw" type="password" required minlength="4" placeholder="4자 이상" /></div>
+          <button class="btn" style="width:100%;">회원가입 완료 (3,000P 받기)</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 마이페이지 모달 -->
+  <div class="overlay" id="myModal">
+    <div class="modal">
+      <div class="m-head"><span>마이페이지 · 포인트 내역</span><button onclick="closeModal()">×</button></div>
+      <div class="m-body" id="myBody"></div>
+    </div>
+  </div>
+
+  <!-- 장바구니 & 결제 모달 -->
+  <div class="overlay" id="cartModal">
+    <div class="modal">
+      <div class="m-head"><span>장바구니 및 결제</span><button onclick="closeModal()">×</button></div>
+      <div class="m-body" id="cartBody"></div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const TIERS = [
+      { name: 'BRONZE', min: 0, rate: 0.02, dc: 0, free: false, bg: '#E9DFD5', col: '#7C4D25', perks: ['가입 즉시 3,000P 지급', '결제액 2% 포인트 적립', '5만원 이상 무료배송'] },
+      { name: 'SILVER', min: 150000, rate: 0.04, dc: 0, free: true, bg: '#E5E7EB', col: '#374151', perks: ['결제액 4% 포인트 적립', '전 상품 무조건 무료배송', '생일 5,000P 쿠폰'] },
+      { name: 'GOLD', min: 350000, rate: 0.07, dc: 0.03, free: true, bg: '#FFD400', col: '#111', perks: ['결제액 7% 포인트 적립', '상시 3% 등급 추가할인', '무료배송 · 무료교환'] },
+      { name: 'VIP', min: 600000, rate: 0.10, dc: 0.05, free: true, bg: '#EE1C25', col: '#fff', perks: ['결제액 10% 최고 적립', '상시 5% 등급 추가할인', '한정판 우선 구매권'] }
+    ];
+
+    const PRODUCTS = [
+      { id: 1, cat: 'running', label: '러닝화', name: 'VELOCITY CARBON PRO', kr: '벨로시티 카본 프로 레이싱화', price: 189000, orig: 229000, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80' },
+      { id: 2, cat: 'running', label: '러닝화', name: 'CLOUDMAX DAILY 26', kr: '클라우드맥스 데일리 쿠션 러닝화', price: 149000, orig: 169000, img: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800&q=80' },
+      { id: 3, cat: 'running', label: '러닝화', name: 'TERRA GRIP RUN', kr: '테라 그립 전천후 트레일 러닝화', price: 165000, orig: 165000, img: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=800&q=80' },
+      { id: 4, cat: 'casual', label: '일상화', name: 'COURT CLASSIC LEATHER', kr: '코트 클래식 미니멀 레더 일상화', price: 99000, orig: 119000, img: 'https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?auto=format&fit=crop&w=800&q=80' },
+      { id: 5, cat: 'casual', label: '일상화', name: 'HERITAGE 996 DAILY', kr: '헤리티지 996 레트로 일상화', price: 139000, orig: 139000, img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80' },
+      { id: 6, cat: 'casual', label: '일상화', name: 'CRIMSON STREET LOW', kr: '크림슨 스트릿 로우 스니커즈', price: 89000, orig: 109000, img: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80' }
+    ];
+
+    let state = JSON.parse(localStorage.getItem('redstep_v2') || 'null') || {
+      users: { demo: { id: 'demo', pw: '1234', name: '김러너', points: 12500, spend: 380000, logs: ['가입 웰컴 +3,000P', '러닝화 구매 적립 +9,500P'] } },
+      uid: null, cart: [], cat: 'all'
+    };
+    const save = () => localStorage.setItem('redstep_v2', JSON.stringify(state));
+    const user = () => state.uid ? state.users[state.uid] : null;
+    const tierOf = u => TIERS.reduce((a, t) => (u && u.spend >= t.min ? t : a), TIERS[0]);
+    const won = n => Number(n).toLocaleString('ko-KR') + '원';
+    const pt = n => Number(n).toLocaleString('ko-KR') + 'P';
+
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg; el.style.display = 'block';
+      clearTimeout(window._t); window._t = setTimeout(() => el.style.display = 'none', 2600);
+    }
+
+    /* 히어로 슬라이드 */
+    let cur = 0;
+    const slides = document.querySelectorAll('.slide');
+    document.getElementById('dots').innerHTML = [...slides].map((_, i) => `<button class="dot ${i===0?'active':''}" onclick="goSlide(${i})"></button>`).join('');
+    function goSlide(i) {
+      cur = (i + slides.length) % slides.length;
+      slides.forEach((s, idx) => s.classList.toggle('active', idx === cur));
+      document.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === cur));
+    }
+    function moveSlide(n) { goSlide(cur + n); }
+    setInterval(() => moveSlide(1), 4000);
+
+    /* 상품 렌더링 */
+    function setCat(c) {
+      state.cat = c;
+      document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.c === c));
+      renderShop();
+    }
+    function renderShop() {
+      const q = document.getElementById('searchBox').value.trim().toLowerCase();
+      const t = tierOf(user());
+      const list = PRODUCTS.filter(p => (state.cat === 'all' || p.cat === state.cat) && (p.name + p.kr + p.label).toLowerCase().includes(q));
+      document.getElementById('grid').innerHTML = list.map(p => {
+        const off = p.orig > p.price ? Math.round((1 - p.price / p.orig) * 100) : 0;
+        const sizes = [240,250,260,265,270,275,280].map(s => `<option value="${s}" ${s===270?'selected':''}>${s}mm</option>`).join('');
+        return `<div class="card">
+          <div class="thumb">
+            <span class="tag">${p.label}</span>${off ? `<span class="tag sale">${off}% OFF</span>` : ''}
+            <img src="${p.img}" alt="${p.kr}" />
+          </div>
+          <div class="c-body">
+            <h3>${p.name}</h3><div class="sub">${p.kr}</div>
+            <div class="price-row"><span class="price">${won(p.price)}</span>${off ? `<span class="orig">${won(p.orig)}</span>` : ''}</div>
+            <div class="pt-line">${t.name} 적립 +${pt(Math.floor(p.price * t.rate))} (${Math.round(t.rate*100)}%)</div>
+            <div class="buy-row">
+              <select id="sz-${p.id}">${sizes}</select>
+              <button class="btn" onclick="addCart(${p.id})">장바구니 담기</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    /* 멤버십 & 헤더 갱신 */
+    function renderUI() {
+      const u = user(), t = tierOf(u);
+      const uBtn = document.getElementById('userBtn');
+      uBtn.className = u ? 'chip on' : 'chip';
+      uBtn.innerHTML = u ? `${t.name} ${u.name}<span class="pt">${pt(u.points)}</span>` : '로그인 / 회원가입';
+      document.getElementById('cartCount').textContent = state.cart.reduce((a, b) => a + b.qty, 0);
+
+      document.getElementById('memberBanner').innerHTML = u
+        ? `<div><b>${u.name}</b>님은 현재 <b style="color:var(--red)">${t.name}</b> 등급 · 보유 포인트 <b>${pt(u.points)}</b> · 누적 구매 <b>${won(u.spend)}</b></div>
+           <button class="btn dark" onclick="openMy()">마이페이지 / 내역</button>`
+        : `<div>회원가입 즉시 <b>3,000P 웰컴 포인트</b> 지급! 구매할수록 등급과 적립률이 올라갑니다.</div>
+           <div style="display:flex;gap:8px;"><button class="btn" onclick="openAuth('signup')">회원가입 (+3,000P)</button><button class="btn dark" onclick="demoLogin()">1초 체험 로그인</button></div>`;
+
+      document.getElementById('tierGrid').innerHTML = TIERS.map(x => `
+        <div class="tier ${u && t.name === x.name ? 'now' : ''}">
+          <span class="t-badge" style="background:${x.bg};color:${x.col}">${x.name}</span>
+          <h4>${Math.round(x.rate*100)}% <span>적립</span></h4>
+          <p>${x.min ? '누적 ' + won(x.min) + ' 이상' : '회원가입 즉시'}</p>
+          <ul>${x.perks.map(k => `<li>• ${k}</li>`).join('')}</ul>
+        </div>`).join('');
+      renderShop();
+    }
+
+    /* 인증 */
+    function clickUser() { user() ? openMy() : openAuth('login'); }
+    function openAuth(tab) { closeModal(); switchAuth(tab); document.getElementById('authModal').classList.add('open'); }
+    function switchAuth(tab) {
+      const l = tab === 'login';
+      document.getElementById('tLogin').classList.toggle('active', l);
+      document.getElementById('tSignup').classList.toggle('active', !l);
+      document.getElementById('fLogin').style.display = l ? 'block' : 'none';
+      document.getElementById('fSignup').style.display = l ? 'none' : 'block';
+    }
+    function doLogin(e) {
+      e.preventDefault();
+      const u = state.users[document.getElementById('lId').value.trim()];
+      if (!u || u.pw !== document.getElementById('lPw').value) return toast('아이디 또는 비밀번호가 틀렸습니다.');
+      state.uid = u.id; save(); closeModal(); renderUI(); toast(`${u.name}님 환영합니다!`);
+    }
+    function demoLogin() { state.uid = 'demo'; save(); closeModal(); renderUI(); toast('체험 계정(GOLD · 12,500P) 로그인 완료!'); }
+    function doSignup(e) {
+      e.preventDefault();
+      const id = document.getElementById('sId').value.trim();
+      if (state.users[id]) return toast('이미 있는 아이디입니다.');
+      state.users[id] = { id, pw: document.getElementById('sPw').value, name: document.getElementById('sName').value.trim(), points: 3000, spend: 0, logs: ['신규 회원가입 웰컴 +3,000P'] };
+      state.uid = id; save(); closeModal(); renderUI(); toast('🎉 회원가입 완료! 3,000P가 지급되었습니다.');
+    }
+    function openMy() {
+      const u = user(), t = tierOf(u);
+      document.getElementById('myBody').innerHTML = `
+        <div class="pt-box"><b>${u.name} (${t.name})</b><br>보유 포인트: <b style="color:var(--red)">${pt(u.points)}</b> · 누적 구매: <b>${won(u.spend)}</b></div>
+        <div style="font-weight:800;margin:12px 0 6px;">포인트 · 주문 기록</div>
+        <div style="font-size:13px;line-height:1.9;">${u.logs.slice().reverse().map(x => `<div>• ${x}</div>`).join('')}</div>
+        <button class="btn dark" style="width:100%;margin-top:16px;" onclick="state.uid=null;save();closeModal();renderUI();toast('로그아웃되었습니다.')">로그아웃</button>`;
+      document.getElementById('myModal').classList.add('open');
+    }
+
+    /* 장바구니 & 결제 */
+    function addCart(id) {
+      const size = document.getElementById('sz-' + id).value;
+      const found = state.cart.find(c => c.id === id && c.size === size);
+      found ? found.qty++ : state.cart.push({ id, size, qty: 1 });
+      save(); renderUI(); toast('장바구니에 담았습니다!');
+    }
+    function chQty(i, d) {
+      state.cart[i].qty += d;
+      if (state.cart[i].qty <= 0) state.cart.splice(i, 1);
+      save(); renderUI(); openCart();
+    }
+    function openCart() {
+      closeModal();
+      const u = user(), t = tierOf(u);
+      const sub = state.cart.reduce((s, c) => s + PRODUCTS.find(p => p.id === c.id).price * c.qty, 0);
+      const dc = Math.floor(sub * t.dc);
+      const ship = sub === 0 || t.free || sub >= 50000 ? 0 : 3000;
+      const base = Math.max(0, sub - dc + ship);
+      const maxPt = u ? Math.min(u.points, base) : 0;
+
+      document.getElementById('cartBody').innerHTML = !state.cart.length
+        ? `<p style="text-align:center;padding:40px 0;color:#777;">장바구니가 비어 있습니다.</p>`
+        : `${state.cart.map((c, i) => {
+            const p = PRODUCTS.find(x => x.id === c.id);
+            return `<div class="cart-item"><img src="${p.img}" />
+              <div style="flex:1;"><b>${p.name}</b><div style="font-size:12px;color:#666;">${c.size}mm · ${won(p.price)}</div></div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <button class="chip" style="padding:2px 8px;" onclick="chQty(${i},-1)">-</button><b>${c.qty}</b>
+                <button class="chip" style="padding:2px 8px;" onclick="chQty(${i},1)">+</button>
+              </div></div>`;
+          }).join('')}
+          <form onsubmit="doPay(event,${base},${maxPt})" style="margin-top:14px;">
+            <div class="field"><label>배송지 주소</label><input required value="서울시 강남구 테헤란로 123" /></div>
+            <div class="field"><label>결제 수단</label>
+              <select id="payWay"><option>신용/체크카드</option><option>카카오페이</option><option>네이버페이</option><option>토스페이</option></select>
+            </div>
+            <div class="pt-box">
+              ${u ? `보유 포인트 <b>${pt(u.points)}</b> (최대 ${pt(maxPt)} 사용 가능)
+                     <div style="display:flex;gap:6px;margin-top:6px;">
+                       <input id="usePt" type="number" min="0" max="${maxPt}" value="0" oninput="updPay(${base})" style="flex:1;height:36px;padding:0 10px;border:1px solid #ccc;border-radius:5px;" />
+                       <button type="button" class="btn dark" style="padding:0 12px;" onclick="document.getElementById('usePt').value=${maxPt};updPay(${base})">전액사용</button>
+                     </div>`
+                  : `로그인하면 <b>3,000P</b> 사용 및 등급 적립 가능! <a href="javascript:openAuth('signup')" style="color:var(--red);font-weight:800;text-decoration:underline;">회원가입</a>`}
+            </div>
+            <div class="sum-row"><span>상품 합계</span><span>${won(sub)}</span></div>
+            ${dc ? `<div class="sum-row" style="color:var(--red)"><span>${t.name} 등급 할인 (${Math.round(t.dc*100)}%)</span><span>-${won(dc)}</span></div>` : ''}
+            <div class="sum-row"><span>배송비</span><span>${ship ? won(ship) : '무료'}</span></div>
+            <div class="sum-row total"><span>최종 결제 금액</span><span id="finalTxt">${won(base)}</span></div>
+            <button class="btn" style="width:100%;margin-top:12px;">결제하기</button>
+          </form>`;
+      document.getElementById('cartModal').classList.add('open');
+    }
+    function updPay(base) {
+      const v = Math.max(0, parseInt(document.getElementById('usePt').value || 0, 10));
+      document.getElementById('finalTxt').textContent = won(Math.max(0, base - v));
+    }
+    function doPay(e, base, maxPt) {
+      e.preventDefault();
+      const u = user(), use = u ? Math.min(maxPt, Math.max(0, parseInt(document.getElementById('usePt').value || 0, 10))) : 0;
+      const paid = Math.max(0, base - use);
+      let msg = `✅ ${won(paid)} 결제 완료! (${document.getElementById('payWay').value})`;
+      if (u) {
+        const before = tierOf(u), earn = Math.floor(paid * before.rate);
+        u.points = u.points - use + earn; u.spend += paid;
+        if (use) u.logs.push(`주문 포인트 사용 -${pt(use)}`);
+        u.logs.push(`상품 결제 (${won(paid)}) · 적립 +${pt(earn)}`);
+        const after = tierOf(u);
+        msg += ` · +${pt(earn)} 적립`;
+        if (after.name !== before.name) msg += ` 🎉 ${after.name} 등급 승급!`;
+      }
+      state.cart = []; save(); closeModal(); renderUI(); toast(msg);
+    }
+    function closeModal() { document.querySelectorAll('.overlay').forEach(o => o.classList.remove('open')); }
+    renderUI();
+  </script>
+</body>
+</html>
